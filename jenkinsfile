@@ -11,9 +11,9 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: "${GITHUB_BRANCH}",
+                git branch: "${main}",
                     credentialsId: "${GITHUB_CREDENTIALS}",
-                    url: "${GITHUB_REPO}"
+                    url: "${https://github.com/muniprakash7}"
             }
         }
 
