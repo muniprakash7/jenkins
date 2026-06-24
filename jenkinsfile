@@ -1,0 +1,68 @@
+pipeline {
+    agent anyhttps://github.com/muniprakash7
+
+    environment {
+        GITHUB_REPO = 'https://github.com/muniprakash7/jenkins.git'
+        GITHUB_BRANCH = 'main'
+        GITHUB_CREDENTIALS = 'github-credentials-id'
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: "${GITHUB_BRANCH}",
+                    credentialsId: "${GITHUB_CREDENTIALS}",
+                    url: "${GITHUB_REPO}"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building application...'
+                // Example:
+                // sh 'mvn clean package'
+                // sh 'npm install && npm run build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                // Example:
+                // sh 'mvn test'
+                // sh 'npm test'
+            }
+        }
+
+        stage('Push Changes to GitHub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: "${GITHUB_CREDENTIALS}",
+                    usernameVariable: 'GIT_USERNAME',
+                    passwordVariable: 'GIT_TOKEN'
+                )]) {
+
+                    sh '''
+                        git config user.name "Jenkins"
+                        git config user.email "muniprakashrathnala7@gmail.com"
+
+                        git add .
+                        git commit -m "Automated commit from Jenkins" || true
+
+                        git push https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/your-username/your-repo.git HEAD:${GITHUB_BRANCH}
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
