@@ -2,61 +2,40 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_REPO = 'https://github.com/muniprakash7/jenkins.git'
-        GITHUB_BRANCH = 'main'
-        GITHUB_CREDENTIALS = 'github-credentials-id'
+        DEPLOY_DIR = "/var/www/html"
     }
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: "${GITHUB_BRANCH}",
-                    credentialsId: "${GITHUB_CREDENTIALS}",
-                    url: "${GITHUB_REPO}"
+                checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building application...'
+                echo 'Building Car Website...'
             }
         }
 
-        stage('Test') {
+        stage('Deploy') {
             steps {
-                echo 'Running tests...'
-            }
-        }
-
-        stage('Push Changes to GitHub') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "${GITHUB_CREDENTIALS}",
-                    usernameVariable: 'GIT_USERNAME',
-                    passwordVariable: 'GIT_TOKEN'
-                )]) {
-
-                    sh '''
-                        git config user.name "Jenkins"
-                        git config user.email "muniprakashrathnala7@gmail.com"
-
-                        git add .
-                        git commit -m "Automated commit from Jenkins" || true
-
-                        git push https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/muniprakash7/jenkins.git HEAD:${GITHUB_BRANCH}
-                    '''
-                }
+                sh """
+                    sudo rm -rf ${DEPLOY_DIR}/*
+                    sudo cp -r * ${DEPLOY_DIR}/
+                """
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully.'
+            echo 'Car Website deployed successfully!'
         }
+
         failure {
-            echo 'Pipeline failed.'
+            echo 'Deployment failed!'
         }
     }
 }
