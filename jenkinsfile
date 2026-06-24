@@ -1,5 +1,5 @@
 pipeline {
-    agent anyhttps://github.com/muniprakash7
+    agent any
 
     environment {
         GITHUB_REPO = 'https://github.com/muniprakash7/jenkins.git'
@@ -11,27 +11,21 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: "${main}",
+                git branch: "${GITHUB_BRANCH}",
                     credentialsId: "${GITHUB_CREDENTIALS}",
-                    url: "${https://github.com/muniprakash7}"
+                    url: "${GITHUB_REPO}"
             }
         }
 
         stage('Build') {
             steps {
                 echo 'Building application...'
-                // Example:
-                // sh 'mvn clean package'
-                // sh 'npm install && npm run build'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Example:
-                // sh 'mvn test'
-                // sh 'npm test'
             }
         }
 
@@ -50,7 +44,7 @@ pipeline {
                         git add .
                         git commit -m "Automated commit from Jenkins" || true
 
-                        git push https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/your-username/your-repo.git HEAD:${GITHUB_BRANCH}
+                        git push https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/muniprakash7/jenkins.git HEAD:${GITHUB_BRANCH}
                     '''
                 }
             }
