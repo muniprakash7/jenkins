@@ -1,41 +1,39 @@
 pipeline {
     agent any
 
-    environment {
-        DEPLOY_DIR = "/var/www/html"
-    }
-
     stages {
-
         stage('Checkout') {
             steps {
-                checkout scm
+                echo 'Getting project files from GitHub...'
+                git 'https://github.com/muniprakash7/car-website.git'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building Car Website...'
+                echo 'Building the car website project...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing the car website project...'
             }
         }
 
         stage('Deploy') {
             steps {
-                sh """
-                    sudo rm -rf ${DEPLOY_DIR}/*
-                    sudo cp -r * ${DEPLOY_DIR}/
-                """
+                echo 'Deploying the car website project...'
             }
         }
     }
 
     post {
         success {
-            echo 'Car Website deployed successfully!'
+            echo 'Car website pipeline completed successfully!'
         }
-
         failure {
-            echo 'Deployment failed!'
+            echo 'Car website pipeline failed!'
         }
     }
 }
